@@ -189,6 +189,38 @@ const bool SELECTION_MODE_COLUMNS[COL_COLUMNS_NUMBER] = {
 
 //////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////
+
+void SeoRowToClipboard(TreeWidgetItem* item) {
+    QString body = QString("");
+    const QString tab = QString("\t");
+
+    QString name = item->data(COL_NAME, Qt::DisplayRole).toString();
+    QString total_th = item->data(COL_TOTAL_TIME_PER_THREAD, Qt::UserRole).toString();
+    QString min_th = item->data(COL_MIN_PER_THREAD, Qt::UserRole).toString();
+    QString max_th = item->data(COL_MAX_PER_THREAD, Qt::UserRole).toString();
+    QString avg_th = item->data(COL_AVG_PER_THREAD, Qt::UserRole).toString();
+    QString ncalls_th = item->data(COL_NCALLS_PER_THREAD, Qt::UserRole).toString();
+
+    std::vector<QString> dataVec = {name, total_th, min_th, max_th, avg_th, ncalls_th};
+
+    body += name + tab;
+    body += total_th + tab;
+    body += min_th + tab;
+    body += max_th + tab;
+    body += avg_th + tab;
+    body += ncalls_th + tab;
+
+    qInfo() << body;
+
+    QClipboard* cb = QGuiApplication::clipboard();
+    cb->setText(body);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+
 BlocksTreeWidget::BlocksTreeWidget(QWidget* _parent)
     : Parent(_parent)
     , m_beginTime(::std::numeric_limits<decltype(m_beginTime)>::max())
@@ -1348,6 +1380,10 @@ void BlocksTreeWidget::onCurrentItemChange(QTreeWidgetItem* _item, QTreeWidgetIt
             EASY_GLOBALS.selected_block_id = easyBlock(EASY_GLOBALS.selected_block).tree.node->id();
         else
             profiler_gui::set_max(EASY_GLOBALS.selected_block_id);
+
+        // MY FIX
+        if (item != nullptr)
+            SeoRowToClipboard(item);
     }
 
     disconnect(&EASY_GLOBALS.events, &profiler_gui::GlobalSignals::selectedBlockChanged, this, &This::onSelectedBlockChange);

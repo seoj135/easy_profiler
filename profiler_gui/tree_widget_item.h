@@ -58,6 +58,7 @@
 #define EASY_TREE_WIDGET_ITEM_H
 
 #include <stdlib.h>
+#include <qclipboard.h>
 #include <QTreeWidget>
 #include <QStyledItemDelegate>
 #include <easy/reader.h>
